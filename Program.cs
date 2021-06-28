@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using System.IO;
 using StackExchange.Redis;
+using System.Configuration;
 
 namespace RedisConsoleApp
 {
@@ -15,9 +16,6 @@ namespace RedisConsoleApp
 
         static int Main(string[] args)
         {
-            // Initialize serilog logger
-            Log.Logger = new LoggerConfiguration().CreateLogger();
-
             try
             {
                 MainAsync(args).Wait();
@@ -31,8 +29,6 @@ namespace RedisConsoleApp
 
         static async Task MainAsync(string[] args)
         {
-            // Create service collection
-            Log.Information("Creating service collection");
             ServiceCollection serviceCollection = new ServiceCollection();
             ConfigureServices(serviceCollection);
 
@@ -59,9 +55,15 @@ namespace RedisConsoleApp
         private static void ConfigureServices(IServiceCollection services)
         {
             Configuration = new ConfigurationBuilder()
-                .SetBasePath(Directory.GetParent(AppContext.BaseDirectory).FullName)
-                .AddJsonFile("appsettings.json", false)
-                .Build();
+               .SetBasePath(Directory.GetParent(AppContext.BaseDirectory).FullName)
+               .AddJsonFile("appsettings.json", false)
+               .Build();
+
+            // Initialize serilog logger
+            Log.Logger = new LoggerConfiguration().ReadFrom.Configuration(Configuration).CreateLogger();
+
+            Log.Information("Creating service collection");
+
 
             services.AddSingleton<IConfigurationRoot>(Configuration);
             services.AddTransient<RedisService>();

@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
+using Serilog;
 
 namespace RedisConsoleApp
 {
@@ -28,6 +29,7 @@ namespace RedisConsoleApp
                     if (!string.IsNullOrEmpty(isCurrentlyRunning))
                     {
                         Console.WriteLine("Function is currently running");
+                        Log.Information("Function is currently running");
                         return $"Function is currently running";
                     }
 
@@ -37,10 +39,12 @@ namespace RedisConsoleApp
                     });
 
                     Console.WriteLine("Setted");
+                    Log.Information("Setted");
 
                     await RedisMan.SetStringAsync(RedisKey, string.Empty);
 
                     Console.WriteLine("Removed");
+                    Log.Information("Removed");
                     await delayTask;
                 }
             }
@@ -49,6 +53,10 @@ namespace RedisConsoleApp
                 Console.WriteLine("Inner Exception : " + e.InnerException);
                 Console.WriteLine("Inner Exception Message : " + e.InnerException.Message);
                 Console.WriteLine("Message : " + e.Message);
+
+                Log.Warning("Inner Exception : " + e.InnerException);
+                Log.Warning("Inner Exception Message : " + e.InnerException.Message);
+                Log.Warning("Message : " + e.Message);
             }
             return string.Empty;
         }
