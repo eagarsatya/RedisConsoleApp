@@ -20,6 +20,7 @@ namespace RedisConsoleApp
 
         public async Task<string> Run()
         {
+            var counter = 0;
             try
             {
                 while (true)
@@ -38,13 +39,14 @@ namespace RedisConsoleApp
                         AbsoluteExpirationRelativeToNow = new TimeSpan(48, 0, 0)
                     });
 
-                    Console.WriteLine("Setted");
+                    Console.WriteLine("Setted : " + counter);
                     Log.Information("Setted");
 
                     await RedisMan.SetStringAsync(RedisKey, string.Empty);
 
                     Console.WriteLine("Removed");
                     Log.Information("Removed");
+                    counter++;
                     await delayTask;
                 }
             }
@@ -54,9 +56,9 @@ namespace RedisConsoleApp
                 Console.WriteLine("Inner Exception Message : " + e.InnerException.Message);
                 Console.WriteLine("Message : " + e.Message);
 
-                Log.Warning("Inner Exception : " + e.InnerException);
-                Log.Warning("Inner Exception Message : " + e.InnerException.Message);
-                Log.Warning("Message : " + e.Message);
+                Log.Error("Inner Exception : " + e.InnerException);
+                Log.Error("Inner Exception Message : " + e.InnerException.Message);
+                Log.Error("Message : " + e.Message);
             }
             return string.Empty;
         }
